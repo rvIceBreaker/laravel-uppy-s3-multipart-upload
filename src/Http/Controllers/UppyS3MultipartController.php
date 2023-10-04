@@ -3,7 +3,7 @@
 namespace Tapp\LaravelUppyS3MultipartUpload\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Aws\S3\S3Client;
 use Illuminate\Support\Str;
 use Throwable;
 
@@ -15,7 +15,14 @@ class UppyS3MultipartController extends Controller
 
     public function __construct()
     {
-        $this->client = Storage::disk('s3')->getClient();
+        $this->client = new S3Client([
+            'credentials' => [
+                'key' => config('filesystems.disks.s3.key'),
+                'secret' => config('filesystems.disks.s3.secret'),
+            ],
+            'region' => config('filesystems.disks.s3.region'),
+            'version' => 'latest',
+        ]);
 
         $this->bucket = config('filesystems.disks.s3.bucket');
     }
@@ -119,7 +126,7 @@ class UppyS3MultipartController extends Controller
             return response()
                 ->json([
                     'message' => $exception->getMessage(),
-                ], $exception->getStatusCode());
+                ], 500);
         }
 
         return response()
