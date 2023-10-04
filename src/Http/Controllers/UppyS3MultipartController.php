@@ -22,6 +22,7 @@ class UppyS3MultipartController extends Controller
             ],
             'region' => config('filesystems.disks.s3.region'),
             'version' => 'latest',
+            'endpoint' => config('filesystems.disks.s3.endpoint')
         ]);
 
         $this->bucket = config('filesystems.disks.s3.bucket');
